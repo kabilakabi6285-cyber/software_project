@@ -1,0 +1,53 @@
+name: PR Review Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install google-genai PyGithub python-dotenv pydantic
+      
+      - name: Run PR Review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_REPO: ${{ github.repository }}
+          GEMINI_MODEL: gemini-3.1-flash-lite
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, '.')
+          from src.github.client import GitHubClient
+          from src.ai.agent import PRReviewAgent
+          
+          pr_num = ${{ github.event.pull_request.number }}
+          client = GitHubClient()
+          agent = PRReviewAgent()
+          
+          data = client.get_pr_diff(pr_num)
+          issues = agent.analyze_code(data['diff'])
+          
+          if issues:
+              comments = [i.model_dump() for i in issues]
+              client.post_comments(pr_num, comments)
+              print(f'Posted {len(issues)} comments')
+          else:
+              print('No issues found')
+          "
