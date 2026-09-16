@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install google-genai PyGithub python-dotenv pydantic
       
-            - name: Run PR Review
+      - name: Run PR Review
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
