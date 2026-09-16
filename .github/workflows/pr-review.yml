@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install google-genai PyGithub python-dotenv pydantic
       
-      - name: Run PR Review
+            - name: Run PR Review
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -32,17 +32,22 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: |
           python -c "
-          import sys
-          sys.path.insert(0, '.')
+          import sys, os
+          sys.path.insert(0, os.getcwd())
           from src.github.client import GitHubClient
           from src.ai.agent import PRReviewAgent
           
           pr_num = ${{ github.event.pull_request.number }}
+          print(f'Reviewing PR #{pr_num}')
+          
           client = GitHubClient()
           agent = PRReviewAgent()
           
           data = client.get_pr_diff(pr_num)
+          print(f'Found {len(data[\"files\"])} files')
+          
           issues = agent.analyze_code(data['diff'])
+          print(f'Found {len(issues)} issues')
           
           if issues:
               comments = [i.model_dump() for i in issues]
