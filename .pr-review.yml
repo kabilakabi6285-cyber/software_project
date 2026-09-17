@@ -1,0 +1,22 @@
+# Files matching these patterns will NEVER be sent to the LLM
+exclude_patterns:
+  - ".*\\.env$"
+  - ".*\\.env\\..*"
+  - "secrets/.*"
+  - "credentials/.*"
+  - ".*\\.pem$"
+  - ".*\\.key$"
+  - "id_rsa"
+  - ".*\\.aws/.*"
+  - "config/production.*"
+
+# Severity thresholds
+severity_thresholds:
+  high: block
+  medium: warn
+  low: ignore
+
+# Rules
+rules:
+  require_tests: true
+  max_line_length: 120

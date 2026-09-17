@@ -13,7 +13,7 @@ class GitHubClient:
     def get_pr_diff(self, pr_number: int) -> dict:
         """Fetches the diff and list of changed files for a given PR."""
         pr = self.repo.get_pull(pr_number)
-        files = pr.get_files()
+        files = list(pr.get_files())
         
         # Combine patches into a single diff string
         diff_content = ""
@@ -21,7 +21,7 @@ class GitHubClient:
             if file.patch:
                 diff_content += f"--- {file.filename}\n{file.patch}\n\n"
         
-        return {"files": list(files), "diff": diff_content}
+        return {"files":files, "diff": diff_content}
 
     def post_comments(self, pr_number: int, comments: list[dict]):
         """Posts a summary comment to the PR."""
