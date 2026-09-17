@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install google-genai PyGithub python-dotenv pydantic
+        run: pip install google-genai PyGithub python-dotenv pydantic pyyaml
 
       - name: Run PR Review
         env:
