@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .env
 test_agent.py
+*.db
+*.db-journal
