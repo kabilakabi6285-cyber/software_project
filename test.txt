@@ -1,0 +1,6 @@
+This is a test file for PR review
+
+function testFunction() {
+  console.log("Hello");
+  // Missing error handling
+}
