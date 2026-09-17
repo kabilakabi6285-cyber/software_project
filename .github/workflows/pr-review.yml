@@ -10,19 +10,18 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
-        run: |
-          pip install google-genai PyGithub python-dotenv pydantic
-      
+        run: pip install google-genai PyGithub python-dotenv pydantic
+
       - name: Run PR Review
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,19 +35,19 @@ jobs:
           sys.path.insert(0, os.getcwd())
           from src.github.client import GitHubClient
           from src.ai.agent import PRReviewAgent
-          
+
           pr_num = ${{ github.event.pull_request.number }}
           print(f'Reviewing PR #{pr_num}')
-          
+
           client = GitHubClient()
           agent = PRReviewAgent()
-          
+
           data = client.get_pr_diff(pr_num)
           print(f'Found {len(data[\"files\"])} files')
-          
+
           issues = agent.analyze_code(data['diff'])
           print(f'Found {len(issues)} issues')
-          
+
           if issues:
               comments = [i.model_dump() for i in issues]
               client.post_comments(pr_num, comments)
