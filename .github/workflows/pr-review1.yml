@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install google-genai PyGithub python-dotenv pydantic
+          pip install google-genai PyGithub python-dotenv pydantic pyyaml
 
       - name: Run PR Review
         env:
