@@ -1,0 +1,40 @@
+const express = require('express');
+const mysql = require('mysql');
+
+const app = express();
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'admin123',
+  database: 'myapp'
+});
+
+app.get('/user/:id', (req, res) => {
+  const userId = req.params.id;
+  const query = `SELECT * FROM users WHERE id = ${userId}`;
+  
+  db.query(query, (err, results) => {
+    const user = results[0];
+    res.json({
+      name: user.name,
+      email: user.email,
+      ssn: user.social_security_number
+    });
+  });
+});
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+  
+  db.query(query, (err, results) => {
+    if (results.length > 0) {
+      res.json({ success: true, token: 'abc123' });
+    } else {
+      res.json({ success: false });
+    }
+  });
+});
+
+app.listen(3000);
